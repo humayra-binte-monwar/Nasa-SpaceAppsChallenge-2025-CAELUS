@@ -1,0 +1,201 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: white;
+}
+
+#navbar {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    padding: 20px 40px; 
+    z-index: 100;
+    display: flex;
+    align-items: center;
+}
+
+#navbar .logo {
+    font-family: "Newsreader";
+    font-size: 1vw;
+    color: #fff;
+    font-weight: 300;
+}
+
+#main {
+    height: 100vh;
+    width: 100%;
+    position: relative; 
+    overflow: hidden; 
+}
+
+#hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    z-index: 1;
+}
+
+.hero-text {
+    position: absolute;
+    inset: 0; 
+    z-index: 10; 
+    display: grid;
+    place-items: center;  
+    pointer-events: none;
+}
+
+.hero-text h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 8vw;
+    font-weight: 900;
+    color: #fff;
+    opacity: 0; 
+    padding: 10px;
+    letter-spacing: 5px;
+}
+
+.hero-text h1::after {
+    content: '|';
+    margin-left: 10px;
+    font-weight: 100; 
+    opacity: 0; 
+}
+
+.hero-text h1.typing::after {
+    opacity: 1;
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.story-text {
+    position: absolute;
+    inset: 0; 
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.story-text p {
+    position: absolute; 
+    top: 25%;       
+    left: 5%;        
+    font-family: 'Roboto';
+    font-size: 1vw;
+    line-height: 1.6;
+    text-align: left;
+    color: #8b8b8b;
+    max-width: 30%;
+}
+
+.story-text i {
+    color: #e9e3e3;
+}
+
+.find-planet {
+    position: absolute; 
+    top: 53%;         
+    left: 5%;       
+    margin-top: 0; 
+}
+
+.exoplanet-button {
+    pointer-events: auto;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: "Roboto";
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.4s, color 0.4s;
+}
+
+.exoplanet-button:hover {
+    background-color: brown;
+    color: white;
+}
+
+.arrow{
+    position: absolute;
+    top: 53.5%;         
+    left: 16%; 
+    width: 2vw;
+    height: auto;
+}
+
+.story-text2 {
+    position: absolute;
+    inset: 0; 
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.story-text2 p {
+    position: absolute; 
+    top: 25%;       
+    left: 5%;        
+    font-family: 'Roboto';
+    font-size: 1vw;
+    line-height: 1.6;
+    text-align: left;
+    color: #8b8b8b;
+    max-width: 30%;
+}
+
+.story-text2 i {
+    color: #e9e3e3;
+}
+
+.identify-planet {
+    position: absolute; 
+    top: 49%;         
+    left: 5%;       
+    margin-top: 0; 
+}
+
+.exoplanet-button2 {
+    pointer-events: auto;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: "Roboto";
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.4s, color 0.4s;
+}
+
+.exoplanet-button2:hover {
+    background-color: brown;
+    color: white;
+}
+
+.arrow2{
+    position: absolute;
+    top: 49.5%;         
+    left: 17%; 
+    width: 2vw;
+    height: auto;
+}

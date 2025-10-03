@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Solar System</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+
+<body>
+  <div id="systemSwitch">
+    <!-- <button id="solarBtn" class="active">🌞</button> -->
+    <button id="home" onclick="window.location.href='/'" style="font-size: 17px;">Home</button>
+    <button id="solarBtn" class="active" style="font-size: 17px;">Solar System</button>
+    <!-- <button id="exoBtn">🪐</button> -->
+    <button id="exoBtn" style="font-size: 17px;">Kepler's K2 Mission</button>
+    <!-- Add this new button -->
+    <!-- <button id="toiBtn">🌌</button> -->
+    <button id="toiBtn" style="font-size: 17px;">TESS Mission Candidates</button>
+  </div>
+  <canvas id="c"></canvas>
+
+  <div id="solarUI">
+    <button id="pauseBtn">Pause</button>
+    <div id="infoBox" class="hidden">
+      <h2 id="planetName">Planet Name</h2>
+      <p id="planetType">Type: Terrestrial</p>
+      <p id="planetDiameter">Diameter: 12,742 km</p>
+      <p id="planetDistance">Distance from Sun: 149.6 million km</p>
+      <p id="planetOrbit">Orbit Period: 365.25 days</p>
+      <p id="planetDescription">Description: Earth is the third planet from the Sun.</p>
+    </div>
+    <div id="searchBox">
+      <label for="planetTypeInput">Learn about a Planet! </label>
+      <input type="text" id="planetTypeInput" placeholder="Enter type (e.g., Gas Giant)">
+      <select id="planetSelect">
+        <option value="">-- Select Planet --</option>
+      </select>
+      <button id="goBtn" style="color: white;">Go</button>
+    </div>
+    <div id="planetPopup" class="hidden">
+      <div id="popupContent">
+        <button id="closePopup">&times;</button>
+        <button id="toggleInfo">+</button>
+        <div id="popup3D"></div>
+        <div id="planetDetails" class="hiddenDetails">
+          <h2 id="popupPlanetName">Planet Name</h2>
+          <p><strong>Type:</strong> <span id="popupType"></span></p>
+          <p><strong>Mass:</strong> <span id="popupMass"></span></p>
+          <p><strong>Radius:</strong> <span id="popupRadius"></span></p>
+          <p><strong>Diameter:</strong> <span id="popupDiameter"></span></p>
+          <p><strong>Distance from Sun:</strong> <span id="popupDistance"></span></p>
+          <p><strong>Orbit Period:</strong> <span id="popupOrbit"></span></p>
+          <p><strong>Description:</strong> <span id="popupDescription"></span></p>
+        </div>
+      </div>
+    </div>
+    <div class="instructions">
+      Click and drag to rotate view | Scroll to zoom | Hover over planets for info
+    </div>
+  </div>
+
+  <div id="exoUI" class="exo-ui">
+    <div class="info-panel">
+      <h2>System Information</h2>
+      <div class="info-item">
+        <h3>Star</h3>
+        <p>K2-239 (Red Dwarf)</p>
+      </div>
+      <div class="info-item">
+        <h3>Planets</h3>
+        <p>3 Rocky Worlds</p>
+      </div>
+      <div class="info-item">
+        <h3>Distance</h3>
+        <p>101 light-years from Earth</p>
+      </div>
+      <div class="info-item">
+        <h3>Discovery</h3>
+        <p>2018 (Kepler Space Telescope)</p>
+      </div>
+    </div>
+    <div class="distance-indicator">
+      <i class="fas fa-map-marker-alt"></i> 101 light-years from Earth
+    </div>
+    <!-- Add this button to your exoUI section -->
+    <button id="habitabilityBtn">Can You Live Here?</button>
+  </div>
+
+  <!-- Add this after your exoUI div -->
+<div id="toiUI" class="exo-ui" style="display: none;">
+  <div class="info-panel">
+    <h2>System Information</h2>
+    <div class="info-item">
+      <h3>Star</h3>
+      <p>TOI-1075 (Orange Dwarf)</p>
+    </div>
+    <div class="info-item">
+      <h3>Planet</h3>
+      <p>TOI-1075 b (Super-Earth)</p>
+    </div>
+    <div class="info-item">
+      <h3>Distance</h3>
+      <p>200 light-years from Earth</p>
+    </div>
+    <div class="info-item">
+      <h3>Discovery</h3>
+      <p>2022 (TESS Space Telescope)</p>
+    </div>
+  </div>
+  <div class="distance-indicator">
+    <i class="fas fa-map-marker-alt"></i> 200 light-years from Earth
+  </div>
+  <button id="habitabilityBtnTOI">Can You Live Here?</button>
+</div>
+
+<!-- Add this after the toiUI section -->
+<div id="habitabilityCheckTOI" class="hidden">
+  <div class="habitability-container-TOI">
+    <button id="closeHabitabilityTOI">&times;</button>
+    <div class="habitability-header-TOI">
+      <h2>Exoplanet Habitability Check</h2>
+      <p>Can humans survive on TOI-1075 b?</p>
+    </div>
+    
+    <div class="planets-grid-TOI">
+      <div class="planet-card-TOI selected" data-planet="toi-1075b">
+        <div class="planet-icon-TOI">🪐</div>
+        <h3 class="planet-name-TOI">TOI-1075 b</h3>
+        <p class="planet-details-TOI">Super-Earth • 1.72 Earth Radii • 14.5 Day Orbit</p>
+      </div>
+    </div>
+    
+    <button id="checkHabitabilityTOI">Check Habitability</button>
+    
+    <div class="habitability-result-TOI" id="habitabilityResultTOI" style="display: none;">
+      <div class="result-header-TOI">
+        <div class="result-icon-TOI" id="resultIconTOI">🚫</div>
+        <h2 class="result-title-TOI" id="resultTitleTOI">Not Habitable</h2>
+      </div>
+      
+      <div class="result-details-TOI">
+        <p id="resultDescriptionTOI">This planet does not meet the necessary conditions for human survival.</p>
+        
+        <div class="progress-bar-TOI">
+          <div class="progress-fill-TOI" id="habitabilityScoreTOI" style="width: 15%; background: #F44336;"></div>
+        </div>
+        <div class="progress-labels-TOI">
+          <span>Low</span>
+          <span>Habitability Score</span>
+          <span>High</span>
+        </div>
+        
+        <h3>Key Factors:</h3>
+        <ul class="factors-list-TOI" id="factorsListTOI">
+          <li class="negative-TOI">Extreme temperatures (467°C)</li>
+          <li class="negative-TOI">High surface gravity</li>
+          <li class="negative-TOI">No atmosphere</li>
+          <li class="negative-TOI">Intense stellar radiation</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="habitability-footer-TOI">
+      <p>Based on scientific data from the TESS Space Telescope and habitability research</p>
+    </div>
+  </div>
+</div>
+
+  <script type="module" src="main2.js"></script>
+</body>
+
+</html>

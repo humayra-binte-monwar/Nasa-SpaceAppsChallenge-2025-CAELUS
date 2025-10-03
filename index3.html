@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Newsreader">
+    <link rel="stylesheet" href="/style3.css">
+    <title>CAELUS</title>
+</head>
+<body>
+    <nav id="navbar">
+        <div class="logo"><a href="/" style="color: white; text-decoration: none;">CAELUS</a></div>
+    </nav>
+
+    <main id="content-area">
+        <!-- Section 1: Upload Form -->
+        {% if not results and not error_message %}
+        <div class="card-container">
+            <h1>Exoplanet Signal Analysis</h1>
+            <p>Upload a CSV file containing flux data from a star to determine if it hosts an exoplanet.</p>
+
+            <form id="upload-form" action="/analyze" method="post" enctype="multipart/form-data">
+                <input type="file" id="file-upload" name="file" accept=".csv" hidden/>
+                
+                <label for="file-upload" class="upload-button">
+                    <i class="ri-upload-2-line"></i>
+                    <span>Choose CSV File</span>
+                </label>
+                
+                <span id="file-name-display">No file selected</span>
+
+                <button type="submit" class="predict-button">
+                    <i class="ri-finder-line"></i>
+                    Analyze Signal
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Section 2: Results Display -->
+        <!-- Section 2: Results Display -->
+        {% if results %}
+        <div id="result-container" class="card-container">
+            <div class="results-header">
+                <h2>Analysis Complete</h2>
+                <div class="results-summary">
+                    <div class="summary-item">
+                        <span class="summary-count" id="exoplanet-count">0</span>
+                        <span class="summary-label">Exoplanets Detected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-count" id="total-stars">0</span>
+                        <span class="summary-label">Stars Analyzed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confidence-graph">
+                <h3>Confidence Levels</h3>
+                <div class="graph-container">
+                    {% for result in results %}
+                    {% set confidence_percent = result.split('Confidence:')[1].split(')')[0].strip().replace('%', '') | float %}
+                    {% set is_exoplanet = confidence_percent > 50 %}
+                    {% set display_confidence = confidence_percent if is_exoplanet else (100 - confidence_percent) %}
+                    <div class="star-result" data-confidence="{{ confidence_percent / 100 }}">
+                        <div class="star-header">
+                            <span class="star-name">{{ result.split(':')[0] }}</span>
+                            <span class="star-confidence">{{ "%.1f"|format(confidence_percent) }}%</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill 
+                                {% if is_exoplanet %}exoplanet-detected{% else %}no-exoplanet{% endif %}"
+                                style="width: {{ display_confidence }}%">
+                            </div>
+                        </div>
+                        <div class="star-status 
+                            {% if is_exoplanet %}status-detected{% else %}status-not-detected{% endif %}">
+                            {{ 'Exoplanet Detected' if is_exoplanet else 'No Exoplanet' }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="results-actions">
+                <a href="/analyze" class="upload-button">
+                    <i class="ri-refresh-line"></i>
+                    Analyze Another File
+                </a>
+                <button class="download-button" onclick="downloadResults()">
+                    <i class="ri-download-line"></i>
+                    Download Report
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+    <script>
+        const fileUpload = document.getElementById('file-upload');
+        if (fileUpload) {
+            const fileNameDisplay = document.getElementById('file-name-display');
+            fileUpload.addEventListener('change', () => {
+                if (fileUpload.files.length > 0) {
+                    const file = fileUpload.files[0];
+                    const fileSizeMB = file.size / 1024 / 1024;
+                    fileNameDisplay.textContent = fileUpload.files[0].name;
+                    
+                    if (fileSizeMB > 50) {
+                        alert(`File too large: ${fileSizeMB.toFixed(2)}MB. Maximum size is 50MB.`);
+                        fileUpload.value = '';
+                        fileNameDisplay.textContent = 'No file selected';
+                    }
+                } else {
+                    fileNameDisplay.textContent = 'No file selected';
+                }
+            });
+        }
+
+        // Update summary counts
+        function updateSummaryCounts() {
+            const results = document.querySelectorAll('.star-result');
+            const exoplanetCount = document.querySelectorAll('.status-detected').length;
+            const totalStars = results.length;
+            
+            document.getElementById('exoplanet-count').textContent = exoplanetCount;
+            document.getElementById('total-stars').textContent = totalStars;
+            
+            // Animate the counts
+            animateCount('exoplanet-count', 0, exoplanetCount, 1000);
+            animateCount('total-stars', 0, totalStars, 1000);
+        }
+
+        function animateCount(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            let startTimestamp = null;
+            
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            
+            window.requestAnimationFrame(step);
+        }
+
+        function downloadResults() {
+            const results = [];
+            document.querySelectorAll('.star-result').forEach(star => {
+                const name = star.querySelector('.star-name').textContent;
+                const confidence = star.querySelector('.star-confidence').textContent;
+                const status = star.querySelector('.star-status').textContent;
+                results.push(`${name}: ${status} (${confidence})`);
+            });
+            
+            const content = `CAELUS Exoplanet Analysis Report\n\n${results.join('\n')}`;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'caelus-analysis-report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize when results are shown
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.querySelector('.star-result')) {
+                updateSummaryCounts();
+                
+                // Animate confidence bars
+                setTimeout(() => {
+                    document.querySelectorAll('.confidence-fill').forEach(bar => {
+                        bar.style.transition = 'width 1.5s ease-in-out';
+                    });
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
